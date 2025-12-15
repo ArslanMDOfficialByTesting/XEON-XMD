@@ -35,8 +35,8 @@ let initialConnection = true;
 const PORT = process.env.PORT || 3000;
 let store = {}; // Defined here, typically initialized with makeInMemoryStore and linked to Matrix.ev
 
-const whatsappChannelLink = 'https://whatsapp.com/channel/0029VasHgfG4tRrwjAUyTs10';
-const whatsappChannelId = '120363369453603973@newsletter';
+const whatsappChannelLink = 'https://whatsapp.com/channel/0029VarfjW04tRrmwfb8x306';
+const whatsappChannelId = '120363348739987203@newsletter';
 
 const MAIN_LOGGER = pino({
     timestamp: () => `,"time":"${new Date().toJSON()}"`
@@ -94,8 +94,8 @@ async function downloadSessionData() {
         return false;
     }
 
-    if (config.SESSION_ID.startsWith("XEON-XTECH~")) {
-        const sessdata = config.SESSION_ID.split("XEON-XTECH~")[1];
+    if (config.SESSION_ID.startsWith("QADEER-AI~")) {
+        const sessdata = config.SESSION_ID.split("QADEER-AI~")[1];
 
         if (!sessdata || !sessdata.includes("#")) {
             console.error('❌ Invalid SESSION_ID format for mega.nz! It must contain both file ID and decryption key.');
@@ -122,8 +122,8 @@ async function downloadSessionData() {
             console.error('❌ Failed to download session data from Mega.nz:', error);
             return false;
         }
-    } else if (config.SESSION_ID.startsWith("POPKID$")) {
-        const sessdata = config.SESSION_ID.split("POPKID$")[1];
+    } else if (config.SESSION_ID.startsWith("ARSLAN-MD~")) {
+        const sessdata = config.SESSION_ID.split("ARSLAN-MD~")[1];
         const url = `https://pastebin.com/raw/${sessdata}`;
         try {
             console.log("🔄 Downloading Session from Pastebin...");
@@ -137,7 +137,7 @@ async function downloadSessionData() {
             return false;
         }
     } else {
-        console.error('❌ Unknown SESSION_ID format. Please use XEON-XTECH~...#... or POPKID$...');
+        console.error('❌ Unknown SESSION_ID format. Please use ARSLAN-MD~...#... or ARSLAN-MD$...');
         return false;
     }
 }
@@ -239,7 +239,7 @@ const quotedContact = {
             displayName: config.OWNER_NAME || "System | Verified ✅",
             vcard: `BEGIN:VCARD
 VERSION:3.0
-FN:${config.OWNER_NAME || "Xeon-Xtech"}
+FN:${config.OWNER_NAME || "ARSLAN-MD"}
 ORG:Bot Repo;
 TEL;type=CELL:+1234567890
 END:VCARD`
@@ -258,7 +258,7 @@ async function start() {
             version,
             logger: pino({ level: 'silent' }),
             printQRInTerminal: useQR,
-            browser: ["XEON-XTECH", "safari", "3.3"],
+            browser: ["ARSLAN-MD", "safari", "3.3"],
             auth: state,
             getMessage: async (key) => {
                 if (store && typeof store.loadMessage === 'function') {
