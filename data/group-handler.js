@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import config from '../../config.cjs';
+import config from '../config.cjs';
 
 const newsletterName = "𝐗ҽσɳ-𝐗ƚҽƈ𝐡";
 const fallbackPP = "https://i.ibb.co/fqvKZrP/ppdefault.jpg";
