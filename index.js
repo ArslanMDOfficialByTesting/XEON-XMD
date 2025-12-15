@@ -85,59 +85,69 @@ async function updateDeploymentStats() {
 
     return stats;
 }
-
 async function downloadSessionData() {
     console.log("Debugging SESSION_ID:", config.SESSION_ID);
 
     if (!config.SESSION_ID) {
-        console.error('❌ Please add your session to SESSION_ID env !!');
+        console.error("❌ SESSION_ID not provided");
         return false;
     }
 
-    if (config.SESSION_ID.startsWith("QADEER-AI~")) {
-        const sessdata = config.SESSION_ID.split("QADEER-AI~")[1];
+    let session = config.SESSION_ID.trim();
 
-        if (!sessdata || !sessdata.includes("#")) {
-            console.error('❌ Invalid SESSION_ID format for mega.nz! It must contain both file ID and decryption key.');
-            return false;
+    try {
+        // =========================
+        // CASE 1: BASE64 SESSION
+        // =========================
+        if (!session.includes("~") && !session.includes("#")) {
+            console.log("🔄 Detected Base64 Session...");
+            const decoded = Buffer.from(session, "base64").toString("utf-8");
+            await fs.promises.writeFile(credsPath, decoded);
+            console.log("🔒 Base64 Session Loaded Successfully");
+            return true;
         }
 
-        const [fileID, decryptKey] = sessdata.split("#");
+        // =========================
+        // CASE 2: MEGA SESSION
+        // format: ANYNAME~FILEID#KEY
+        // =========================
+        if (session.includes("~") && session.includes("#")) {
+            console.log("🔄 Detected Mega Session...");
+            const dataPart = session.split("~")[1];
+            const [fileID, decryptKey] = dataPart.split("#");
 
-        try {
-            console.log("🔄 Downloading Session from Mega.nz...");
+            if (!fileID || !decryptKey) {
+                console.error("❌ Invalid Mega SESSION_ID");
+                return false;
+            }
+
             const file = File.fromURL(`https://mega.nz/file/${fileID}#${decryptKey}`);
-
             const data = await new Promise((resolve, reject) => {
-                file.download((err, data) => {
-                    if (err) reject(err);
-                    else resolve(data);
-                });
+                file.download((err, data) => err ? reject(err) : resolve(data));
             });
 
             await fs.promises.writeFile(credsPath, data);
-            console.log("🔒 Session Successfully Loaded from Mega.nz!!");
+            console.log("🔒 Mega Session Loaded Successfully");
             return true;
-        } catch (error) {
-            console.error('❌ Failed to download session data from Mega.nz:', error);
-            return false;
         }
-    } else if (config.SESSION_ID.startsWith("ARSLAN-MD~")) {
-        const sessdata = config.SESSION_ID.split("ARSLAN-MD~")[1];
-        const url = `https://pastebin.com/raw/${sessdata}`;
-        try {
-            console.log("🔄 Downloading Session from Pastebin...");
-            const response = await axios.get(url);
-            const data = typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
+
+        // =========================
+        // CASE 3: RAW / URL SESSION
+        // =========================
+        if (session.startsWith("http")) {
+            console.log("🔄 Detected Remote Session URL...");
+            const res = await axios.get(session);
+            const data = typeof res.data === "string" ? res.data : JSON.stringify(res.data);
             await fs.promises.writeFile(credsPath, data);
-            console.log("🔒 Session Successfully Loaded from Pastebin !!");
+            console.log("🔒 Remote Session Loaded Successfully");
             return true;
-        } catch (error) {
-            console.error('❌ Failed to download session data from Pastebin:', error);
-            return false;
         }
-    } else {
-        console.error('❌ Unknown SESSION_ID format. Please use ARSLAN-MD~...#... or ARSLAN-MD$...');
+
+        console.error("❌ Unknown SESSION_ID format");
+        return false;
+
+    } catch (err) {
+        console.error("❌ Session Load Failed:", err);
         return false;
     }
 }
