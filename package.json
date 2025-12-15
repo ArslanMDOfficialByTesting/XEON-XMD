@@ -13,7 +13,7 @@
   "author": "Black-Tappy",
   "license": "ISC",
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:baileys-mod@latest",
+    "@whiskeysockets/baileys": "7.0.0-rc.9",
     "@rodrigogs/baileys-store" : "^1.0.1",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@google/generative-ai": "^0.9.0",
@@ -39,7 +39,7 @@
     "gifted-dls": "^1.3.0",
     "google-it": "^1.6.4",
     "human-readable": "^0.2.1",
-    "jimp": "^0.16.13",
+    "jimp": "0.6.1",
     "jpeg-js": "^0.4.4",
     "jsqr": "^1.4.0",
     "libphonenumber": "^0.0.10",
